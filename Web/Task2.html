@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Delta Web Task 2</title>
+	<style type="text/css">
+		html, body {
+			padding: 0;
+			margin: 0;
+			background: #444;
+		}
+		button {
+			float: left;
+			height: 30px;
+			margin: 10px;
+		}
+		#plotter {
+			position: absolute;
+			top: 10px;
+			left: 0;
+			right: 0;
+			bottom: 0;
+		}
+		#plotter_wrapper {
+			width: calc(100%-20px);
+			height: calc(100vh - 60px);
+			margin: 0 10px;
+
+			text-align: center;
+			font-size: 30pt;
+			color: grey;
+			position: relative;
+			background: white;
+			z-index: 2;
+			box-shadow: 0 0 6px 1px #000;
+		}
+		#plotter.empty:before {
+			content: "Add a value to see something more interesting...";
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%,-50%);
+		}
+		.bar {
+			width: 50px;
+			background: #03a9f4;
+			color: white;
+			text-align: center;
+			font-size: 16pt;
+			position: absolute;
+			bottom: 0;
+			border: 1px solid #01579B;
+			border-bottom: none;
+			box-shadow: 0 0 2px #000;
+		}
+	</style>
+</head>
+<body>
+	<button id="btn_add">Add a bar</button>
+	<button id="btn_sort">Sort</button>
+	<br style="clear: both">
+	<div id="plotter_wrapper">
+		<div id="plotter" class="empty"></div>
+	</div>
+
+	<span id="message"></span>
+
+	<script type="text/javascript">
+		var btn_add = document.getElementById("btn_add"),
+			btn_sort = document.getElementById("btn_sort"),
+			plotter = document.getElementById("plotter");
+
+		var bars = [];
+
+		function drawBars() {
+			if(bars.length == 0) {
+				plotter.classList.add("empty");
+				return;
+			}
+			plotter.classList.remove("empty");
+			plotter.innerHTML = "";
+
+			var hundred_perc_ht = bars[0];
+			for(var i = 1; i < bars.length; i++) {
+				if(bars[i] > hundred_perc_ht)
+					hundred_perc_ht = bars[i];
+			}
+
+			for(var i = 0; i < bars.length; i++) {
+				plotter.innerHTML += 
+					"<div class='bar' "
+					+ "style='height:" + (bars[i]/hundred_perc_ht*100) + "%;"
+					+ "left:" + (10 + i * 70) + "px;'>" + bars[i] + "</div>";
+			}
+		}
+
+		function addBar(ht) {
+			ht = typeof ht == "number" ? ht : parseFloat(prompt("Enter a value..."));
+			bars.push(ht);
+			drawBars();
+		}
+
+		function sortBars() {
+			bars.sort(function(a,b) { return a-b; });
+			plotter.innerHTML = "";
+			drawBars();
+		}
+
+		btn_add.addEventListener("click", addBar, false);
+		btn_sort.addEventListener("click", sortBars, false);
+	</script>
+</body>
+</html>
